@@ -1,0 +1,23 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+main {
+  width: 100%;
+  font-size: 0;
+  background-color: skyblue;
+}
+main .imgContainer-item {
+  width: 33.33%;
+  height: 212px;
+  float: left;
+  border: 1px solid black;
+  margin-left: -2px;
+  text-align: center;
+  overflow: hidden;
+}
+main .imgContainer-item img {
+  height: 100%;
+  transition: all 0.3s;
+}
