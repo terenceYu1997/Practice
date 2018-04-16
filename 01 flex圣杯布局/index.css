@@ -1,0 +1,38 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+body header,
+html header {
+  flex: 0 0 100px;
+  background-color: yellowgreen;
+}
+body main,
+html main {
+  flex: 1;
+  display: flex;
+  background-color: skyblue;
+}
+body main #leftSlider,
+html main #leftSlider,
+body main #rightSlider,
+html main #rightSlider {
+  flex: 0 0 200px;
+  background-color: green;
+}
+body main #container,
+html main #container {
+  flex: 1;
+  overflow: hidden;
+  background-color: hotpink;
+}
+body footer,
+html footer {
+  flex: 0 0 100px;
+  background-color: lightGray;
+}

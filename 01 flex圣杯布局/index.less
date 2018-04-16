@@ -1,0 +1,32 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  header {
+    flex: 0 0 100px;
+    background-color: yellowgreen;
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    background-color: skyblue;
+    #leftSlider, #rightSlider {
+      flex: 0 0 200px;
+      background-color: green;
+    }
+    #container {
+      flex: 1;
+      overflow: hidden;
+      background-color: hotpink;
+    }
+  }
+
+  footer {
+    flex: 0 0 100px;
+    background-color: lightGray;
+  }
+}
