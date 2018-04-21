@@ -455,33 +455,12 @@
   window.onload = (() => {
 
     let number = 0
+    let resortFlag = false
     let imgList = Array.from(document.getElementsByTagName('img'))
     let imgListLength = Array.from(document.getElementsByTagName('img')).length
     let seeHeight = document.documentElement.clientHeight
-
-    function throttle (fn, delay, atleast) {
-      let timeout = null
-      let startTime = new Date()
-      return function () {
-        let curTime = new Date()
-        clearTimeout(timeout)
-        if (curTime - startTime >= atleast) {
-          fn()
-          startTime = curTime
-        } else {
-          timeout = setTimeout(fn, delay)
-        }
-      }
-    }
-
-    function resort () {
-      console.log(7777)
-      let timeout = null
-      // todo 了解函数节流的 return用法
-      // let startTime = new Date()
-      // let curTime = new Date()
-
-      new Macy({
+    let newMacy = function () {
+      return new Macy({
         container: '#masonry', // 图像列表容器id
         trueOrder: false,
         waitForImages: false,
@@ -518,51 +497,84 @@
           },
         },
       })
-      setTimeout(() => {
-        for (let i = number; i < imgListLength; i++) {
-          let singleImg = imgList[i]
-          if (singleImg.getBoundingClientRect().top < seeHeight) {
-            singleImg.style.backgroundColor = 'red'
-            singleImg.src = singleImg.getAttribute('temp-src')
-            number = number + 1
-
-            // throttle(resort, 500, 900)
-            setTimeout(() => {
-              resort()
-            }, 1000)
-            // if (singleImg.src == singleImg.getAttribute('temp-src')) {
-            //   console.log(454)
-            // }
-          }
-        }
-        // setTimeout(() => {
-        //   resort()
-        // }, 1200)
-      }, 1000)
     }
 
-    const lazyLoad = function () {
-      console.log(6)
+    function promiseMacy () {
+      return new Promise((resolve, reject) => {
+        newMacy()
+        setTimeout(() => {
+          resolve()
+        }, 1000)
+      })
+    }
+
+    function throttle (fn, delay, atleast) {
+      let timeout = null
+      let startTime = new Date()
+      return function () {
+        let curTime = new Date()
+        clearTimeout(timeout)
+        if (curTime - startTime >= atleast) {
+          fn()
+          startTime = curTime
+        } else {
+          timeout = setTimeout(fn, delay)
+        }
+      }
+    }
+
+    function resort () {
+      console.log('-------------调用了resort---------------')
+      promiseMacy()
       for (let i = number; i < imgListLength; i++) {
         let singleImg = imgList[i]
         if (singleImg.getBoundingClientRect().top < seeHeight) {
-          console.log(33)
-          setTimeout(() => {
+          if (singleImg.src === singleImg.getAttribute('temp-src')) {
+            singleImg.style.border = '2px solid green'
+          } else { //需要赋值
+            resortFlag = true
+            singleImg.style.border = '2px solid blue'
             singleImg.src = singleImg.getAttribute('temp-src')
-            number = number + 1
-          }, 190)
+          }
         }
       }
-      setTimeout(() => {
-        resort()
-      }, 1200)
+
+      if (resortFlag = true) {
+        promiseMacy().then(() => {
+          resortFlag = false
+          let tempNumber = 0
+          //TODO 20是可视区域显示图片的最大数量
+          number > 20 ? tempNumber = number - 20 : tempNumber = number
+          console.log('tempNumber', tempNumber)
+          for (let i = tempNumber; i < imgListLength; i++) {
+            let singleImg = imgList[i]
+            if (singleImg.getBoundingClientRect().top < seeHeight) {
+              if (singleImg.src === singleImg.getAttribute('temp-src')) {
+                singleImg.style.border = '2px solid green'
+              } else { //需要赋值
+                singleImg.src = singleImg.getAttribute('temp-src')
+              }
+            }
+          }
+        })
+      }
+    }
+
+    const lazyLoad = function () {
+      for (let i = number; i < imgListLength; i++) {
+        let singleImg = imgList[i]
+        if (singleImg.getBoundingClientRect().top < seeHeight) {
+          singleImg.src = singleImg.getAttribute('temp-src')
+          number = number + 1
+        }
+      }
+      resort()
     }
 
     function init () {
-      resort()
-      setTimeout(() => {
+      promiseMacy().then(() => {
         lazyLoad()
-      }, 1000)
+      })
     }
 
     init()
