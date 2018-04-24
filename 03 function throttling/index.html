@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>$Title$</title>
+</head>
+<body>
+<main>
+    <button onclick="set()">节流提交</button>
+    <button onclick="set2()">防抖提交</button>
+    <div id="logContainer"></div>
+    <div id="logContainer2"></div>
+</main>
+
+<script>
+  function handler () {
+    let tempDom = document.createElement('div')
+    tempDom.innerText = `${+new Date()} -- ${new Date()}`
+    document.getElementById('logContainer').appendChild(tempDom)
+  }
+
+  function handler2 () {
+    let tempDom = document.createElement('div')
+    tempDom.innerText = `${+new Date()} -- ${new Date()}`
+    document.getElementById('logContainer2').appendChild(tempDom)
+  }
+
+  // let lock = false
+  // let throttle = function (fn, gap) { //函数节流Lock思路
+  //   return function () {
+  //     if (lock == true) {
+  //       return
+  //     }
+  //     lock = true
+  //     setTimeout(() => {
+  //       fn()
+  //       lock = false
+  //     }, gap)
+  //   }
+  // }
+
+  let startTime = +new Date()
+  let lock = false
+  /**
+   * 通过设置delay保证throttle不会被完全锁死.即使用户一直在触发此事件,也可以定时执行fn
+   * @param fn     需要节流的函数
+   * @param delay  活动时间
+   * @param gap    主动设置的间隔时间
+   */
+  let throttle = function (fn, delay, gap) {
+    let currentTime = +new Date()
+    console.log(currentTime - startTime)
+    if (currentTime - startTime > gap) {
+      fn()
+      startTime = currentTime
+    } else {
+      if (lock == true) {
+        return
+      }
+      lock = true
+      setTimeout(() => {
+        fn()
+        lock = false
+      }, delay)
+    }
+  }
+
+  // ---------------------------------------------------------------------------------------------------
+
+  let beginTime = +new Date()
+  /**
+   * 函数防抖
+   * @param fn
+   * @param gap
+   */
+  let deBounce = function (fn, gap) {
+    let currentTime = +new Date()
+    if (currentTime - beginTime > gap) {
+      fn()
+    }
+    beginTime = currentTime
+  }
+
+
+
+
+  function set () { //节流
+    throttle(handler, 1000, 5000)
+  }
+
+  function set2 () { //防抖
+    deBounce(handler, 5000)
+  }
+
+</script>
+</body>
+</html>
