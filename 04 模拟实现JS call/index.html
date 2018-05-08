@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>$Title$</title>
+</head>
+<body>
+
+<script>
+
+  /**
+   * V1
+   * @param context
+   */
+  // Function.prototype.myCall = function (context) {
+  //   context.tempFn = this //A发起的调用,所以this指向A
+  //   context.tempFn()
+  //   delete context.tempFn
+  // }
+  //
+  // var B = {
+  //   value: 10,
+  // }
+  //
+  // function A () {
+  //   document.write(this.value)
+  // }
+  //
+  // A.myCall(B) // 10
+
+  // ------------------------------------------------------------------
+
+  /**
+   * V2
+   * @param context
+   */
+  Function.prototype.myCall2 = function (context) {
+    context.tempFn = this //A发起的调用,所以this指向A
+    var args = [];
+    for(var i = 1, len = arguments.length; i < len; i++) {
+      args.push('arguments[' + i + ']')
+    }
+    // console.log(args) // (2) ["arguments[1]", "arguments[2]"]
+    var result = eval('context.tempFn(' + args +')')
+    //在eval中，args 自动调用 args.toString()方法
+    //最终结果相当于context.fn(arguments[1], arguments[2])
+    delete context.tempFn
+    return result
+  }
+
+  var B = {
+    value: 10,
+  }
+
+  function A (name, age) {
+    document.write(name)
+    document.write(age)
+    document.write(this.value)
+    return {
+      value: this.value,
+      name: name,
+      age: age
+    }
+  }
+
+  A.myCall2(B, '小明', 18) // 10
+  console.log('返回值', A.myCall2(B, '小明', 18))
+  // Object {
+  //    value: 1,
+  //    name: 'kevin',
+  //    age: 18
+  // }
+
+</script>
+</body>
+</html>
